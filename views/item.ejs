@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="stylesheet" href="/stylesheets/item.css">
+</head>
+
+<body>
+        <img src="<%= item.src %>" alt="<%= item.name %>" width="500" height="600">
+    <p>
+        ID: <%= item.id %>,
+        Name: <%= item.name %>,
+        Price: <%= item.price %>,
+        Category: <%= item.category %>
+        <a href="/<%= item.id %>/update">update item</a>
+        <a href="/<%= item.id %>/delete">delete item</a>
+    </p>
+
+  <a href="/">Back to home</a>
+</body>
+
+</html>

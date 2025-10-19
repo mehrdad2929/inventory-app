@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+  </head>
+<body>
+  <h1><%= title %></h1>
+  <form action="/<%= item.id %>/update" method="POST">
+    <label for="name">name:</label>
+    <input type="text" name="name" value="<%= item.name %>" required><br>
+    <label for="price"> price:</label>
+    <input type="number" name="price" value="<%= item.price %>" required><br>
+    <label for="src">Image URL:</label>
+    <input 
+        type="url" 
+        name="src" 
+        placeholder="https://example.com/image.jpg"
+         value="<%= item.src %>"
+    >
+    <small>Leave default or paste an image URL</small>
+    <div class="categories">
+        <h3>Categories:</h3>
+        <div class="category-list">
+            <% categories.forEach(function(category) { %>
+                <div class="category-item">
+                    <input 
+                        type="radio" 
+                        id="cat-<%= category.id %>" 
+                        name="category_id" 
+                        value="<%= category.id %>"
+                        <%= item.category_id === category.id ? 'checked' : '' %>
+                    >
+                    <label for="cat-<%= category.id %>">
+                        <span class="category-color" style="background-color: <%= category.color %>;"></span>
+                        <%= category.category %>
+                    </label>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+    <label for="description"> description:</label>
+    <textarea id="text" name="description" rows="5"
+        placeholder="what story is behind this item" required
+        maxlength="500"
+        class="<%= locals.errors && errors.some(err => err.path === 'text') ? 'error' : '' %>">
+        <%= item.description ? item.description || '' : '' %>
+    </textarea>
+    <button type="submit">Update item</button>
+  </form>
+  <a href="/">Back to home</a>
+</body>
+</html>
