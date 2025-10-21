@@ -6,6 +6,7 @@ itemRouter.get('/', itemController.getItems);
 itemRouter.get('/add', itemController.addItemGet);
 itemRouter.post('/add', itemController.addItemPost);
 itemRouter.post('/reset', itemController.resetInventoryPost);
+itemRouter.get('/favicon.ico', (req, res) => res.status(204).end());
 itemRouter.get('/:id', itemController.getItem);
 itemRouter.get('/:id/update', itemController.updateItemGet);
 itemRouter.post('/:id/update', itemController.updateItemPost);
