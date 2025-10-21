@@ -1,52 +1,94 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-  </head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <style>
+        .category-color {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            margin-right: 6px;
+        }
+    </style>
+</head>
 <body>
-  <h1><%= title %></h1>
-  <form action="/<%= item.id %>/update" method="POST">
-    <label for="name">name:</label>
-    <input type="text" name="name" value="<%= item.name %>" required><br>
-    <label for="price"> price:</label>
-    <input type="number" name="price" value="<%= item.price %>" required><br>
-    <label for="src">Image URL:</label>
-    <input 
-        type="url" 
-        name="src" 
-        placeholder="https://example.com/image.jpg"
-         value="<%= item.src %>"
-    >
-    <small>Leave default or paste an image URL</small>
-    <div class="categories">
-        <h3>Categories:</h3>
-        <div class="category-list">
-            <% categories.forEach(function(category) { %>
-                <div class="category-item">
+    <main class="container">
+        <h1><%= title %></h1>
+        
+        <article>
+            <form action="/<%= item.id %>/update" method="POST">
+                <!-- Basic Info -->
+                <label>
+                    Item Name
                     <input 
-                        type="radio" 
-                        id="cat-<%= category.id %>" 
-                        name="category_id" 
-                        value="<%= category.id %>"
-                        <%= item.category_id === category.id ? 'checked' : '' %>
+                        type="text" 
+                        name="name" 
+                        value="<%= item.name %>"
+                        required
                     >
-                    <label for="cat-<%= category.id %>">
-                        <span class="category-color" style="background-color: <%= category.color %>;"></span>
-                        <%= category.category %>
-                    </label>
-                </div>
-            <% }); %>
-        </div>
-    </div>
-    <label for="description"> description:</label>
-    <textarea id="text" name="description" rows="5"
-        placeholder="what story is behind this item" required
-        maxlength="500"
-        class="<%= locals.errors && errors.some(err => err.path === 'text') ? 'error' : '' %>">
-        <%= item.description ? item.description || '' : '' %>
-    </textarea>
-    <button type="submit">Update item</button>
-  </form>
-  <a href="/">Back to home</a>
+                </label>
+                
+                <label>
+                    Price (gold)
+                    <input 
+                        type="number" 
+                        name="price" 
+                        value="<%= item.price %>"
+                        min="0"
+                        required
+                    >
+                </label>
+                
+                <label>
+                    Image URL
+                    <input 
+                        type="url" 
+                        name="src" 
+                        value="<%= item.src %>"
+                        placeholder="https://example.com/image.jpg"
+                    >
+                    <small>Leave default or paste an image URL</small>
+                </label>
+                
+                <!-- Categories -->
+                <fieldset>
+                    <legend>Category *</legend>
+                    <% categories.forEach(function(category) { %>
+                        <label>
+                            <input 
+                                type="radio" 
+                                name="category_id" 
+                                value="<%= category.id %>"
+                                <%= item.category_id === category.id ? 'checked' : '' %>
+                                required
+                            >
+                            <span class="category-color" style="background-color: <%= category.color %>;"></span>
+                            <%= category.category %>
+                        </label>
+                    <% }); %>
+                </fieldset>
+                
+                <!-- Description -->
+                <label>
+                    Description
+                    <textarea 
+                        name="description" 
+                        rows="5"
+                        placeholder="What story is behind this item?"
+                        maxlength="500"
+                    ><%= item.description || '' %></textarea>
+                    <small>Optional, max 500 characters</small>
+                </label>
+                
+                <button type="submit">Update Item</button>
+            </form>
+        </article>
+        
+        <a href="/" role="button" class="secondary">Back to Home</a>
+    </main>
 </body>
 </html>

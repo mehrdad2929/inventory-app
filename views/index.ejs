@@ -1,136 +1,277 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= title %>
-    </title>
-    <link rel="stylesheet" href="/stylesheets/index.css">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <style>
+        .category-color {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            margin-right: 6px;
+        }
+        .layout-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+        }
+        .sidebar {
+            position: sticky;
+            top: 1rem;
+            max-height: calc(100vh - 2rem);
+            overflow-y: auto;
+        }
+        .sidebar article {
+            margin: 0;
+        }
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        .items-list .item-card {
+            display: flex;
+            gap: 1rem;
+            border: 1px solid var(--pico-muted-border-color);
+            padding: 1rem;
+            border-radius: var(--pico-border-radius);
+            margin-bottom: 1rem;
+        }
+        .items-grid .item-card {
+            border: 1px solid var(--pico-muted-border-color);
+            padding: 1rem;
+            border-radius: var(--pico-border-radius);
+        }
+        .item-card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--pico-border-radius);
+        }
+        .items-list .item-card img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+        }
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .view-toggle button {
+            padding: 0.5rem 1rem;
+            margin: 0;
+        }
+        @media (max-width: 768px) {
+            .layout-container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: relative;
+            }
+        }
+    </style>
 </head>
-
 <body>
-  <h1><%= title %></h1>
-  <form action="/" method="GET" >
-    <div class="search">
-        <h3>Search:</h3>
-        <div class="search-bar">
-            <label for="search">item name:</label>
-            <input 
-                type="search" 
-                id="search" 
-                name="search"
-                value="<%= searchTerm || '' %>"
-            >
-       </div>
-   </div>
-    <div class="order">
-        <h3>Order By:</h3>
-        <div class="order-by">
-            <input 
-                type="radio" 
-                id="name" 
-                name="orderBy" 
-                value="name"
-                <%= (orderBy === 'name' || !orderBy) ? 'checked' : '' %>
-            >
-            <label for="name">Order by name</label><br>
-            
-            <input 
-                type="radio" 
-                id="price" 
-                name="orderBy" 
-                value="price"
-                <%= orderBy === 'price' ? 'checked' : '' %>
-            >
-            <label for="price">Order by price</label><br>
-            <h4>Direction:</h4>
-                <div class="order-direction">
-                    <div>
-                        <input 
-                            type="radio" 
-                            id="asc" 
-                            name="orderDirection" 
-                            value="ASC"
-                            <%= (orderDirection === 'ASC' || !orderDirection) ? 'checked' : '' %>
-                        >
-                        <label for="asc">Ascending (A→Z, 0→9)</label>
-                    </div>
-                    
-                    <div>
-                        <input 
-                            type="radio" 
-                            id="desc" 
-                            name="orderDirection" 
-                            value="DESC"
-                            <%= orderDirection === 'DESC' ? 'checked' : '' %>
-                        >
-                        <label for="desc">Descending (Z→A, 9→0)</label>
-                    </div>
-                </div>
-        </div>
-    </div>
-    <div class="categories">
-        <h3>Categories:</h3>
-        <div class="category-list">
-            <% categories.forEach(function(category) { %>
-                <div class="category-item">
-                    <input 
-                        type="checkbox" 
-                        id="cat-<%= category.id %>" 
-                        name="categories" 
-                        value="<%= category.id %>"
-                        <%= selectedCategories.includes(String(category.id)) ? 'checked' : '' %>
+    <main class="container">
+        <header>
+            <h1><%= title %></h1>
+            <div role="group">
+                <a href="/add" role="button">Add New Item</a>
+                <form action="/reset" method="POST" style="display:inline;">
+                    <button 
+                        type="submit" 
+                        class="secondary"
+                        onclick="return confirm('Reset inventory to default state?');"
                     >
-                    <label for="cat-<%= category.id %>">
-                        <span class="category-color" style="background-color: <%= category.color %>;"></span>
-                        <%= category.category %>
-                    </label>
-                </div>
-            <% }); %>
-        </div>
-    </div>
-    <div class="price-filters">
-        <h3>Price Range</h3>
-        <div class="price-input-group">
-            <label for="minPrice">Min:</label>
-            <input 
-                type="number" 
-                id="minPrice" 
-                name="minPrice" 
-                placeholder="Min price"
-                min="0"
-                value="<%= minPrice || '' %>"
-            >
-            
-            <span>-</span>
-            
-            <label for="maxPrice">Max:</label>
-            <input 
-                type="number" 
-                id="maxPrice" 
-                name="maxPrice" 
-                placeholder="Max price"
-                min="0"
-                value="<%= maxPrice || '' %>"
-            >
-        </div>
-    </div>
-    <button type="submit">Submit</button>
-  </form>
-    <ul>
-      <% if (locals.itemList) {%>
-        <% itemList.forEach(function(item) { %>
-            <li>ID: <%= item.id %>, Name: <%= item.name %> , Price: <%= item.price %>,
-                Category: <%= item.category %>
-                <img src="<%= item.src %>" alt="<%= item.name %>" width="500" height="600">
-                <a href="/<%= item.id %>">to item</a>
-            </li>
-        <% }); %>
-      <% } %>
-    </ul>
-    <a href="/add">add new item</a>
-</body>
+                        Reset to Default
+                    </button>
+                </form>
+            </div>
+        </header>
 
+        <div class="layout-container">
+            <!-- Sidebar Filters -->
+            <aside class="sidebar">
+                <article>
+                    <header>
+                        <strong>Filters</strong>
+                    </header>
+                    <form action="/" method="GET">
+                        <!-- Search -->
+                        <label>
+                            Search
+                            <input 
+                                type="search" 
+                                name="search"
+                                placeholder="Search items..."
+                                value="<%= searchTerm || '' %>"
+                            >
+                        </label>
+                        
+                        <!-- Order By -->
+                        <details open>
+                            <summary>Sort By</summary>
+                            <fieldset>
+                                <label>
+                                    <input 
+                                        type="radio" 
+                                        name="orderBy" 
+                                        value="name"
+                                        <%= (orderBy === 'name' || !orderBy) ? 'checked' : '' %>
+                                    >
+                                    Name
+                                </label>
+                                <label>
+                                    <input 
+                                        type="radio" 
+                                        name="orderBy" 
+                                        value="price"
+                                        <%= orderBy === 'price' ? 'checked' : '' %>
+                                    >
+                                    Price
+                                </label>
+                            </fieldset>
+                            
+                            <fieldset>
+                                <label>
+                                    <input 
+                                        type="radio" 
+                                        name="orderDirection" 
+                                        value="ASC"
+                                        <%= (orderDirection === 'ASC' || !orderDirection) ? 'checked' : '' %>
+                                    >
+                                    Ascending ↑
+                                </label>
+                                <label>
+                                    <input 
+                                        type="radio" 
+                                        name="orderDirection" 
+                                        value="DESC"
+                                        <%= orderDirection === 'DESC' ? 'checked' : '' %>
+                                    >
+                                    Descending ↓
+                                </label>
+                            </fieldset>
+                        </details>
+                        
+                        <!-- Price Range -->
+                        <details open>
+                            <summary>Price Range</summary>
+                            <label>
+                                Min
+                                <input 
+                                    type="number" 
+                                    name="minPrice" 
+                                    placeholder="0"
+                                    min="0"
+                                    value="<%= minPrice || '' %>"
+                                >
+                            </label>
+                            <label>
+                                Max
+                                <input 
+                                    type="number" 
+                                    name="maxPrice" 
+                                    placeholder="10000"
+                                    min="0"
+                                    value="<%= maxPrice || '' %>"
+                                >
+                            </label>
+                        </details>
+                        
+                        <!-- Categories -->
+                        <details open>
+                            <summary>Categories</summary>
+                            <% categories.forEach(function(category) { %>
+                                <label>
+                                    <input 
+                                        type="checkbox" 
+                                        name="categories" 
+                                        value="<%= category.id %>"
+                                        <%= selectedCategories.includes(String(category.id)) ? 'checked' : '' %>
+                                    >
+                                    <span class="category-color" style="background-color: <%= category.color %>;"></span>
+                                    <%= category.category %>
+                                </label>
+                            <% }); %>
+                        </details>
+                        
+                        <button type="submit">Apply Filters</button>
+                    </form>
+                </article>
+            </aside>
+            
+            <!-- Main Content -->
+            <section>
+                <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2>Items (<%= itemList ? itemList.length : 0 %>)</h2>
+                    <div class="view-toggle">
+                        <button type="button" onclick="toggleView('list')" id="listViewBtn">
+                            ☰ List
+                        </button>
+                        <button type="button" onclick="toggleView('grid')" id="gridViewBtn" class="outline">
+                            ⊞ Grid
+                        </button>
+                    </div>
+                </header>
+                
+                <!-- Items Display -->
+                <div id="itemsContainer" class="items-list">
+                    <% if (locals.itemList && itemList.length > 0) { %>
+                        <% itemList.forEach(function(item) { %>
+                            <article class="item-card">
+                                <div>
+                                    <img src="<%= item.src %>" alt="<%= item.name %>">
+                                </div>
+                                <div>
+                                    <h3><%= item.name %></h3>
+                                    <p>
+                                        <small>
+                                            <span class="category-color" style="background-color: <%= item.color %>;"></span>
+                                            <%= item.category %>
+                                        </small>
+                                    </p>
+                                    <p><strong><%= item.price %> gold</strong></p>
+                                    <p><%= item.description || 'No description' %></p>
+                                    <a href="/<%= item.id %>" role="button" class="outline">View Details</a>
+                                </div>
+                            </article>
+                        <% }); %>
+                    <% } else { %>
+                        <p><em>No items found. Try adjusting your filters.</em></p>
+                    <% } %>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        function toggleView(view) {
+            const container = document.getElementById('itemsContainer');
+            const listBtn = document.getElementById('listViewBtn');
+            const gridBtn = document.getElementById('gridViewBtn');
+            
+            if (view === 'grid') {
+                container.className = 'items-grid';
+                listBtn.className = 'outline';
+                gridBtn.className = '';
+            } else {
+                container.className = 'items-list';
+                listBtn.className = '';
+                gridBtn.className = 'outline';
+            }
+            
+            // Save preference
+            localStorage.setItem('viewPreference', view);
+        }
+        
+        // Load saved preference
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedView = localStorage.getItem('viewPreference') || 'list';
+            toggleView(savedView);
+        });
+    </script>
+</body>
 </html>

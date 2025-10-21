@@ -26,6 +26,7 @@ const validateItem = [
 ];
 
 async function addItemGet(req, res) {
+    //TODO:adding try and catch for some of these operations(specialy the ones that are more prone to crash and error)
     res.render("add", {
         title: "adding item",
         categories: await db.getAllCategories(),
@@ -99,6 +100,24 @@ let updateItemPost = [
         res.redirect(`/${req.params.id}`);
     }
 ];
+async function deleteItemPost(req, res) {
+    try {
+        await db.deleteItem(req.params.id);
+        res.redirect("/?message=deleted");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Failed to delete item");
+    }
+};
+async function resetInventoryPost(req, res) {
+    try {
+        await db.resetInventory();
+        res.redirect("/?reset=success");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Failed to reset inventory");
+    }
+};
 async function getItem(req, res) {
     const item = await db.getItemById(req.params.id);
 
@@ -131,5 +150,7 @@ module.exports = {
     updateItemGet,
     addItemPost,
     addItemGet,
+    deleteItemPost,
+    resetInventoryPost,
     getItem
 }

@@ -1,8 +1,5 @@
-const pool = require('./pool')
-//TODO:gonna write specific queries for each route or tasks,there's this 
-//2.one for getting all the categories and then 
-//3.one for the :id route (which is getItemById) 
-//4.and update and delete
+const pool = require('./pool');
+const seeds = require('./seeds');
 
 async function mainPageQuery(search, categoryIds, minPrice, maxPrice, orderBy = 'name', orderDirection = 'ASC') {
     // Start with base query
@@ -80,11 +77,24 @@ async function deleteItem(id) {
     await pool.query(`DELETE FROM inventory WHERE id = $1`, [id]);
 }
 
+async function resetInventory() {
+    const client = await pool.connect();
+    try {
+        await client.query(seeds.dropTables);
+        await client.query(seeds.createCategoriesTable);
+        await client.query(seeds.createSQLTable);
+        await client.query(seeds.createCategories);
+        await client.query(seeds.createSQLData);
+    } finally {
+        client.release();  // Note: No pool.end() here!
+    }
+}
 module.exports = {
     updateItem,
     addItem,
     mainPageQuery,
     getItemById,
     getAllCategories,
+    resetInventory,
     deleteItem
 };

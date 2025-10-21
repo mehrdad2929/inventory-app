@@ -1,6 +1,3 @@
-#! /usr/bin/env node
-require("dotenv").config();
-
 const dropTables = `DROP TABLE IF EXISTS inventory, categories;`;
 
 const createSQLTable = `CREATE TABLE IF NOT EXISTS inventory ( 
@@ -51,26 +48,11 @@ const createCategoriesTable = `CREATE TABLE IF NOT EXISTS categories ( id INTEGE
 
 const createCategories = `INSERT INTO categories (category, color) VALUES ('Consumables', '#fefefe'),('Attributes', '#ffc26c'), ('Equipment', '#634040'), ('Miscellaneous', '#fff952'), ('Secret Shop', '#fffeeb'), ('Accessories', '#b0e3ee'), ('Support', '#ff0062'), ('Magical', '#ffe3bc'), ('Armor', '#11ac7b'), ('Weapons', '#0037ff'), ('Armaments', '#56157f');`;
 
-const pool = require('./pool')
-async function populateDB() {
-    console.log("Seeding...");
-    const client = await pool.connect();
-    try {
-        console.log("Connected to database.");
-        await client.query(dropTables);
-        await client.query(createCategoriesTable);
-        await client.query(createSQLTable);
-        console.log("Tables created.");
-        await client.query(createCategories);
-        await client.query(createSQLData);
-        console.log("Data created.");
-    } catch (error) {
-        console.error("Error occured:", error);
-    } finally {
-        client.release();
-        await pool.end();
-        console.log("Done.");
-    }
-}
+module.exports = {
 
-populateDB();
+    dropTables,
+    createCategoriesTable,
+    createSQLTable,
+    createCategories,
+    createSQLData
+};

@@ -1,27 +1,82 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= title %>
-    </title>
-    <link rel="stylesheet" href="/stylesheets/item.css">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <style>
+        .category-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--pico-border-radius);
+            font-size: 0.875rem;
+        }
+        .item-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--pico-border-radius);
+        }
+    </style>
 </head>
-
 <body>
-        <img src="<%= item.src %>" alt="<%= item.name %>" width="500" height="600">
-    <p>
-        ID: <%= item.id %>,
-        Name: <%= item.name %>,
-        Price: <%= item.price %>,
-        Category: <%= item.category %>
-        <a href="/<%= item.id %>/update">update item</a>
-        <a href="/<%= item.id %>/delete">delete item</a>
-    </p>
-
-  <a href="/">Back to home</a>
+    <main class="container">
+        <article>
+            <header>
+                <h1><%= item.name %></h1>
+                <p>
+                    <span 
+                        class="category-badge" 
+                        style="background-color: <%= item.color %>20; color: <%= item.color %>;"
+                    >
+                        <%= item.category %>
+                    </span>
+                </p>
+            </header>
+            
+            <div class="grid">
+                <div>
+                    <img 
+                        src="<%= item.src %>" 
+                        alt="<%= item.name %>" 
+                        class="item-image"
+                    >
+                </div>
+                
+                <div>
+                    <h2><%= item.price %> gold</h2>
+                    
+                    <p><%= item.description || 'No description available.' %></p>
+                    
+                    <details>
+                        <summary>Item Details</summary>
+                        <ul>
+                            <li><strong>Name:</strong> <%= item.name %></li>
+                            <li><strong>Category:</strong> <%= item.category %></li>
+                            <li><strong>Price:</strong> <%= item.price %> gold</li>
+                        </ul>
+                    </details>
+                </div>
+            </div>
+            
+            <footer>
+                <div role="group">
+                    <a href="/<%= item.id %>/update" role="button">Edit Item</a>
+                    
+                    <form action="/<%= item.id %>/delete" method="POST" style="display:inline;">
+                        <button 
+                            type="submit" 
+                            class="secondary"
+                            onclick="return confirm('Delete <%= item.name %>? This cannot be undone!');"
+                        >
+                            Delete Item
+                        </button>
+                    </form>
+                </div>
+            </footer>
+        </article>
+        
+        <a href="/" role="button" class="outline">← Back to All Items</a>
+    </main>
 </body>
-
 </html>
